@@ -3,7 +3,7 @@ import Tree
 import Satellite
 import Unicode
 
-main = print (huffman relativeFrequencyTable)
+main = putStrLn (finalTest randomNumbers)
 
 -------------------------------------------------------------------------------
 -- Exercise 1.1 : Frequency Table
@@ -22,7 +22,7 @@ frequencyTable input =
 -- Exercise 1.2 : Huffman Trees
 -------------------------------------------------------------------------------
 
-huffman :: [With Int Char] -> Tree Char
+huffman :: [With Int char] -> Tree char
 huffman = build . map (\ (freq :- letter) -> freq :- Leaf letter) . sort
   where
       build [a :- tree] =  tree
@@ -48,62 +48,70 @@ relativeFrequencyTable =
 
 data Bit = O | I
   deriving (Show, Eq, Ord)
--- TODO Hoe weet hij dat hij moet deriven van Booleans?
 
 -- msg = message = the string that needs decoding
 encode :: (Eq char) => Tree char -> [char] -> [Bit]
 encode huffmanTree msg =
-    [] {--
+--    [] {-- (Un)comment for default function
     let
     -- Note: encodedMsg is the reversed of msg
-    encode' :: [char] -> [Bit] -> [Bit]
+    -- GHCI can't match this function definition with the main one, because 'char' is polymorf :-(
+    -- encode' :: (Eq char) => [char] -> [Bit] -> [Bit]
     encode' [] encodedMsg     = reverse encodedMsg
-    encode' [m:ms] encodedMsg =
+    encode' (m:ms) encodedMsg =
         encode' ms ((lookUp m dictionary) ++ encodedMsg)
 
-    dictionary = code [] huffmanTree
+    dictionary = codes huffmanTree
 
     -- This could be faster, if the dictionary would generate a Huffman tree, rather than a plain list. Then we could BFS through it :-)
     -- dx is the remainder of the dictionary
-    lookUp :: char -> [([Bit], char)] -> [Bit]
+    lookUp :: (Eq char) => char -> [(char, [Bit])] -> [Bit]
     lookUp letter [] = [] -- lookUp failed, semantically impossible, throw exception OSLT
-    lookUp letter [(enc, char), dx] = -- dx :: ([Bit], char1), should be [a]
+    lookUp letter ((char, enc): dx) =
         if char == letter
-            then enc
+            then (reverse enc) -- The encryption string is reversed, for optimal 'appending'
             else lookUp letter dx
     in
     encode' msg []
 --}
 
--- The bitprefix is reversed, in order to append efficiently
--- I'm not satisfied with the ++ operator, it seems inefficient
--- This is the "codes" function, but has an longer/uglier definition
--- Given a tree, generates a dictionary
-code :: [Bit] -> Tree char -> [([Bit], char)]
-code bitPrefix charTree =
-    case charTree of
-        Leaf letter ->
-            [(reverse bitPrefix, letter)]
-        (:^:) left right ->
-            (code (O:bitPrefix) left)
-            ++ (code (I:bitPrefix) right)
-
--- TODO: I could refactor "code" into "codes", but first lemma finish ex 1.4
--- codes ∷ Tree char -> [(char, [Bit])]
-
+codes :: Tree char -> [(char, [Bit])]
+codes huffmanTree =
+    let
+        -- The bitprefix is reversed, in order to 'append' efficiently
+        -- I'm not satisfied with the ++ operator, it seems inefficient
+        -- This is the "codes" function, but has an longer/uglier definition
+        -- Given a tree, generates a dictionary
+        codes' :: [Bit] -> Tree char -> [(char, [Bit])]
+        codes' bitPrefix charTree =
+            case charTree of
+                Leaf letter ->
+                    [(letter, reverse bitPrefix)]
+                (:^:) left right ->
+                    (codes' (O:bitPrefix) left)
+                    ++ (codes' (I:bitPrefix) right)
+    in
+        codes' [] huffmanTree
 
 -------------------------------------------------------------------------------
 -- Exercise 1.4
 -------------------------------------------------------------------------------
--- Why use 'char' instead of 'Char'? Enforce typing! :ggrrr:
 
+-- Gets a huffmantree and an encoded string
 decode :: Tree char -> [Bit] -> [char]
-decode huffmanTree decodedString =
-    []{--
+decode ogHuffmanTree encMsg =
+    --[]{-- (Un)comment for default function
     let
-        dictionary = code [] huffmanTree
+        --Again, polymorfic 'char' cannot be infered (or something like that)
+        --decode' :: Tree char -> [Bit] -> [char]
+        decode' (Leaf letter)    []     = [letter]
+        decode' (left :^: right) []     = [] -- A half-read word at the end will be chopped off #notMyProblem. Shouldn't semantically happen
+        decode' (Leaf letter)    encMsg =
+            (letter : (decode' ogHuffmanTree encMsg))
+        decode' (left :^: right) (O:bx) = decode' left bx
+        decode' (left :^: right) (I:bx) = decode' right bx
     in
-
+        decode' ogHuffmanTree encMsg
 --}
 
 -------------------------------------------------------------------------------
@@ -130,8 +138,11 @@ why =
  \languages  are  vitally important to the real\n\
  \world."
 
--- Give string, does creepy stuff with it, returns logging of creepyness
-finalTest :: String -> String
+-- This works on other lists too. Awesome!
+randomNumbers = [0,1,2,4,1,0,1]
+
+-- Given something, does creepy stuff with it, returns logging of creepyness
+finalTest :: (Show char) => (Eq char) => (Ord char) => [char] -> String
 finalTest testString =
     let
         huffmanTree = huffman (frequencyTable testString)
@@ -139,7 +150,8 @@ finalTest testString =
         decodedString = decode huffmanTree encodedString
         check = testString == decodedString
     in
-        "HuffmanTree: " ++ show huffmanTree
-        ++ "\nEncoded string: " ++ show encodedString
-        ++ "\nDecoded string: " ++ show decodedString
-        ++ "\nMy function works: " ++ show check
+        "Original string:   " ++ show testString
+        ++ "\r\nHuffmanTree:       " ++ show huffmanTree
+        ++ "\r\nEncoded string:    " ++ show encodedString
+        ++ "\r\nDecoded string:    " ++ show decodedString
+        ++ "\r\nMy function works: " ++ show check
