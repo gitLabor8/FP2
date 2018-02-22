@@ -49,15 +49,6 @@
 > size (Node _ [])     = 1
 > size (Node _ as)     = 1 + foldr (+) 0 (map size as)
 
-as = [Node _ as, Node _ bs]
-map size as = [123, 235]
-foldr (+) 0 = 123 + 235 + 0
-
-[1,2,3,4]
-[1 + 2 + 3 + 4] -> 1 + 2 +3 + 4
-
-1 + size as + size bs
-
 > winning  ∷ Tree position → Bool
 > winning (Node _ as) = foldr (||) False (map losing as)
 
@@ -79,8 +70,16 @@ prune cuts off all elements below the given depth
 
 > type Value = Int  -- |[-100 .. 100]|
 
+> getElem :: Tree elem -> elem
+> getElem (Node a _) = a
+
+> average :: [Int] -> Int
+> average as = (div (sum (map fromIntegral as)) (length as)) :: Int
+
 > static ∷ Position → Value
-> static _ = 0 -- Default value, to make things compile
+> static (1,1) = -100
+> static pos = negate (average (map static (map getElem trees)))
+>            where (Node _ trees) = gametree moves pos
 
  Dual recursion functions, cool!
 
@@ -89,5 +88,5 @@ prune cuts off all elements below the given depth
 > maximize eval (Node pos ax) = maximum (map (minimize eval) ax)
 
 > minimize  ∷ (position → Value) → (Tree position → Value)
-> minimize eval (Node pos []) = eval pos
+> minimize eval (Node pos []) = negate (eval pos)
 > minimize eval (Node pos ax) = minimum (map (maximize eval) ax)
