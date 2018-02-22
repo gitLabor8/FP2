@@ -1,16 +1,17 @@
+> {-# LANGUAGE UnicodeSyntax #-}
+> module Assignment2_4
+> where
+> import Unicode
 
-module Minimax
-where
--- import Unicode
 
-type Position = (Integer, Integer)
+> type Position = (Integer, Integer)
 
-moves ∷ Position → [Position]
-moves (a,b) = [(x,y)|(x+y == a)|| (x+y == b)] 
+> moves :: Position -> [Position]
+> moves (a,b) = [(x,y) | x <- [1..(max a b)], y <- [1..(max a b)], x <= y, (x+y == a) || x + y == b]
 
 Multiway trees.
 
-data Tree elem  =  Node elem [Tree elem]
+> data Tree elem  =  Node elem [Tree elem]
 
 gametree ∷ (position → [position]) → (position → Tree position)
 
