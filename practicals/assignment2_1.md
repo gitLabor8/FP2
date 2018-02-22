@@ -37,14 +37,11 @@ minimum [2,7,1,9,6,5]
 = head (insert 2 (insert 7 ... insert 5 [])...)
 = head (insert 2 (insert 7 ... insert 6 (5:[])...)
 = head (insert 2 (insert 7 ... insert 9 (5 : insert 6 [])...)
-= head (insert 2 (insert 7 ... insert 1 (5 : (insert 9 (insert 6 [])))))
-= head (insert 2 (insert 7 ... insert 1 (5 : (insert 9 (insert 6 [])))))
-= 
-
-
-
-
-
+= head (insert 2 (insert 7 insert 1 (5 : (insert 9 (insert 6 [])))))
+= head (insert 2 (insert 7 (1 : 5 : (insert 9 (insert 6 [])))))
+= head (insert 2 (1 : insert 7 (5 : (insert 9 (insert 6 [])))))
+= head (1 : insert 2 (insert 7 (5 : (insert 9 (insert 6 [])))))
+= 1
 
 
 ```
