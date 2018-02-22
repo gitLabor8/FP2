@@ -39,9 +39,24 @@
 >
 
 
-gametree ∷ (position → [position]) → (position → Tree position)
+> gametree ∷ (a → [a]) → a → Tree a
+> gametree moves a
+>                   |  length (moves a) == 0 = Node a []
+>                   |  otherwise             = Node a [gametree moves x | x <- (moves a)]
 
-size ∷ Tree elem → Integer
+
+> size ∷ Tree elem → Integer
+> size (Node _ [])     = 1
+> size (Node _ as)     = 1 + foldr (+) 0 (map size as)
+
+as = [Node _ as, Node _ bs]
+map size as = [123, 235]
+foldr (+) 0 = 123 + 235 + 0
+
+[1,2,3,4]
+[1 + 2 + 3 + 4] -> 1 + 2 +3 + 4
+
+1 + size as + size bs
 
 winning  ∷ Tree position → Bool
 losing   ∷ Tree position → Bool
