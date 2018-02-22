@@ -64,7 +64,14 @@ losing   ∷ Tree position → Bool
 evaluate ∷ Integer → Position → Value
 evaluate depth  =  maximize static . prune depth . gametree moves
 
-prune ∷ Integer → Tree elem → Tree elem
+prune cuts off all elements below the given depth
+
+> prune ∷ Integer → Tree elem → Tree elem
+> -- This should only happen when someone immediatly requests a tree of depth 0
+> prune 0 t              = t
+> -- Here we cut off the tree
+> prune 1 (Node elem ax) = Node elem []
+> prune n (Node elem ax) = Node elem ((map (prune (n-1))) ax)
 
 type Value = Int  -- |[-100 .. 100]|
 
