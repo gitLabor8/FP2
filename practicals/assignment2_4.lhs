@@ -58,8 +58,12 @@ foldr (+) 0 = 123 + 235 + 0
 
 1 + size as + size bs
 
-winning  ∷ Tree position → Bool
-losing   ∷ Tree position → Bool
+> winning  ∷ Tree position → Bool
+> winning (Node _ as) = foldr (||) False (map losing as)
+
+> losing   ∷ Tree position → Bool
+> losing (Node _ as) = foldr (&&) True (map winning as)
+
 
 evaluate ∷ Integer → Position → Value
 evaluate depth  =  maximize static . prune depth . gametree moves
