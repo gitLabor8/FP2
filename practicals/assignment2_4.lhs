@@ -73,9 +73,17 @@ prune cuts off all elements below the given depth
 > prune 1 (Node elem ax) = Node elem []
 > prune n (Node elem ax) = Node elem ((map (prune (n-1))) ax)
 
-type Value = Int  -- |[-100 .. 100]|
+> type Value = Int  -- |[-100 .. 100]|
 
-static ∷ Position → Value
+> static ∷ Position → Value
+> static _ = 0 -- Default value, to make things compile
 
-maximize  ∷ (position → Value) → (Tree position → Value)
-minimize  ∷ (position → Value) → (Tree position → Value)
+ Dual recursion functions, cool!
+
+> maximize  ∷ (position → Value) → (Tree position → Value)
+> maximize eval (Node pos []) = eval pos
+> maximize eval (Node pos ax) = maximum (map (minimize eval) ax)
+
+> minimize  ∷ (position → Value) → (Tree position → Value)
+> minimize eval (Node pos []) = eval pos
+> minimize eval (Node pos ax) = minimum (map (maximize eval) ax)
