@@ -1,2 +1,10 @@
-assignment*/*
+# MacOS internal files
 .DS_Store
+
+# Before submitting we put our weekly assignments in an extra folder. Sharing this folder via git would be redundant
+assignment*/*
+
+# Executables of .lhs files will be ignored, unless they are given a special name
+assignment*.hi
+assignment*.o
+assignment*.exe
