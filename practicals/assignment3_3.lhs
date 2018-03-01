@@ -1,6 +1,3 @@
-ghc --make OTP.lhs
-
-
 > {-# LANGUAGE UnicodeSyntax #-}
 >
 > module Main
@@ -17,11 +14,13 @@ ghc --make OTP.lhs
 >              b ← dice
 >              return (a + b)
 
+> getArgs = pure ["1337","42"]
+
 > main :: IO ()
 > main = do
 >   setStdGen (mkStdGen 4711)
->   (arg : _) <- getArgs
->   let n = read arg :: Int
+>   (arg : _) <- Main.getArgs
+>   let n = read arg -- :: Int
 >   rs <- sequence (replicate n roll)
 >   print rs
 >   putStrLn ("average: " ++ show (sum rs `div` n))
