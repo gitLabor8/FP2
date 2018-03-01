@@ -8,3 +8,7 @@ assignment*/*
 assignment*.hi
 assignment*.o
 assignment*.exe
+
+# Nobody likes sharing these files
+Unicode.o
+Unicode.hi
