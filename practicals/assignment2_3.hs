@@ -67,3 +67,15 @@ diffAlt (Cons a as) = abs (a - (head as)) ≺ diffAlt as
 
 sum :: (Num elem) => Stream elem -> Stream elem
 sum s = 0 ≺ s + (sum s)
+
+-- We needed to derive these solutions. We did not.
+-- Luckily, Ward-senpai gave us the answers:
+{--
+diff s = tail s - s
+diff (sum s) = tail (sum s) - sum s
+s = tail (sum s) - sum s
+s + sum s = tail (sum s)
+Cons (head (sum s)) (s + sum s) = Cons (head (sum s))  (tail (sum s))
+Cons (head (sum s)) (s + sum s) = sum s
+sum s = Cons 0 (s + sum s)
+--}

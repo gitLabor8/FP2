@@ -17,6 +17,9 @@
 > moves :: Position -> [Position]
 > moves (a,b) = [(x,y) | x <- [1..(max a b)], y <- [1..(max a b)], x <= y, (x+y == a) || x + y == b]
 
+Feedback: This could be more efficient:
+Why would you need to iterate y over all possible values between 1 and the max of a and b? There are only 2 possible values for y for every given value of x (a-x and b-x).
+
 2 Binary trees are for losers
 
 > data Tree elem  =  Node elem [Tree elem]
@@ -48,6 +51,9 @@
 > size ∷ Tree elem → Integer
 > size (Node _ [])     = 1
 > size (Node _ as)     = 1 + foldr (+) 0 (map size as)
+
+Feedback:
+Your base case ([]) is unnecessary here, since the case for as gives the same result as that case if as=[].
 
 > winning  ∷ Tree position → Bool
 > winning (Node _ as) = foldr (||) False (map losing as)
