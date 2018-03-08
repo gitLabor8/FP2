@@ -24,6 +24,7 @@
 >   |  Var String     -- a variable
 >   deriving (Show)
 
+> -- Default Applicative style
 > evalA ∷ (Applicative f) ⇒ Expr → f Integer
 > evalA (Lit i)      =  pure i
 > evalA (e1 :+: e2)  =  pure (+)  <*> evalA e1 <*> evalA e2
@@ -33,6 +34,7 @@
 > toss  ∷  Expr
 > toss  =  Lit 0 :?: Lit 1
 
+> -- f = []
 > evalN ∷ Expr → [Integer]
 > evalN (Lit i)      =  pure i
 > evalN (e1 :+: e2)  =  pure (+)  <*> evalN e1 <*> evalN e2
@@ -44,14 +46,21 @@ evalN toss
 evalN (toss :+: Lit 2 :*: toss)
 evalN (toss :+: Lit 2 :*: (toss :+: Lit 2 :*: (toss :+: Lit 2 :*: toss)))
 
+< evalR :: Expr -> f Integer
+< evalR :: Expr -> Env -> Integer
+< evalR :: Expr -> ((->) Env) Integer
+< -- f = Env -> = (->) Env
+
 > type Env = [(String, Integer)]
 
 instance Applicative ((->) a) where
+    -- pure i :: b -> i
+    -- const  :: i -> b -> i
     pure = const
     (<*>) f g x = f x (g x)
     liftA2 q f g x = q (f x) (g x)
 
-> evalR ∷ Expr → ((->) Env) Integer
+> evalR ∷ Expr → Env -> Integer
 > evalR (Lit i)     = pure i
 > evalR (e1 :+: e2) = pure (+) <*> evalR e1 <*> evalR e2
 > evalR (e1 :*: e2) = pure (*) <*> evalR e1 <*> evalR e2

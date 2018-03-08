@@ -19,9 +19,9 @@
 > maybes  ∷  [elem] → [Maybe elem]
 > maybes elems  =  pure Nothing ++ (pure Just <*> elems)
 
-> data Suit  =  Spades | Hearts | Diamonds | Clubs              deriving (Show)
-> data Rank  =  Faceless Integer | Jack | Queen | King | Ace    deriving (Show)
-> data Card  =  Card Rank Suit | Joker                          deriving (Show)
+> data Suit = Spades | Hearts | Diamonds | Clubs              deriving (Show)
+> data Rank = Faceless Integer | Jack | Queen | King | Ace    deriving (Show)
+> data Card = Card Rank Suit | Joker                          deriving (Show)
 >
 > suits :: [Suit]
 > suits = pure Spades ++ pure Hearts ++ pure Diamonds ++ pure Clubs
@@ -32,25 +32,22 @@
 > cards :: [Card]
 > cards = (pure Card <*> ranks <*> suits) ++ pure Joker
 
-But why not use list comprehensions?
-
 > data Tree elem = Empty | Node (Tree elem) elem (Tree elem)
 >   deriving (Show)
 
 < data List elem = [] | Cons elem (List elem)
 < data List elem = [] | elem : (List elem)
+< data List elems = [] | (:) elems (List elems)
 
-Wat is de prefix operator van een list?
-
-> lists :: [elem] -> Integer -> [elem]
-> lists _ 0        = []
-> lists elems size = pure [] ++ pure _ <*> elems <*> (lists elems (size-1))
+> lists :: [elem] -> Integer -> [[elem]]
+> lists _ 0        = pure []
+> lists elems size = pure (:) <*> elems <*> (lists elems (size-1))
 
 All trees with a certain depth
 
 > trees :: [elem] -> Integer -> [Tree elem]
-> trees _ 0 = []
-> trees elems h = pure Empty ++ (pure Node <*> (trees elems (h-1)) <*> elems <*> (trees elems (h-1)))
+> trees _ 0     = pure Empty
+> trees elems h = pure Node <*> (trees elems (h-1)) <*> elems <*> (trees elems (h-1))
 
 All trees with a certain amount of elements
 
