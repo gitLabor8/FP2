@@ -9,6 +9,13 @@
 > import Data.Maybe
 > -- import Unicode
 
+-------------------------------------------------------------------------------
+-- Exercise 5.3
+-- Dion Scheper      -- s4437578
+-- Max van Laarhoven -- s4547136
+-- Frank Gerlings    -- s4384873
+-------------------------------------------------------------------------------
+
 > data family Map key ∷ * → *
 >
 > class (Ord key) ⇒ Key key where
